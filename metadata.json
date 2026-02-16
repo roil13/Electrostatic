@@ -1,0 +1,5 @@
+{
+  "name": "Electrostatics Lab: Charged Sheets & Hanging Spheres",
+  "description": "An interactive physics simulation exploring the forces between a uniformly charged large plate and small hanging spheres, based on classic electrostatics experiments.",
+  "requestFramePermissions": []
+}
