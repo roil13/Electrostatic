@@ -1,27 +1,17 @@
 
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { SimulationParams } from './types';
 import { DEFAULT_PARAMS } from './constants';
 import { calculateResults, formatScientific } from './services/physics';
 import Visualizer from './components/Visualizer';
 import Controls from './components/Controls';
 import AnalysisChart from './components/AnalysisChart';
-import { getPhysicsInsight } from './services/gemini';
 
 const App: React.FC = () => {
   const [params, setParams] = useState<SimulationParams>(DEFAULT_PARAMS);
-  const [insight, setInsight] = useState<string>('');
-  const [loadingInsight, setLoadingInsight] = useState(false);
 
   const results = calculateResults(params, params.q1);
   const angleDeg = (results.alpha * 180 / Math.PI).toFixed(2);
-
-  const handleGetInsight = async () => {
-    setLoadingInsight(true);
-    const text = await getPhysicsInsight(params, results);
-    setInsight(text || '');
-    setLoadingInsight(false);
-  };
 
   return (
     <div className="min-h-screen bg-slate-50 text-slate-900 p-4 md:p-8">
@@ -37,44 +27,23 @@ const App: React.FC = () => {
           
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
             <div className="bg-white p-4 rounded-xl shadow border-t-4 border-blue-500">
-              <p className="text-sm text-slate-500">שדה חשמלי (E)</p>
-              <p className="text-xl font-bold">{formatScientific(params.sigma / (2 * 8.854e-12))} N/C</p>
+              <p className="text-sm text-slate-500 font-semibold">שדה חשמלי (E)</p>
+              <p className="text-xl font-bold text-slate-800">{formatScientific(params.sigma / (2 * 8.854e-12))} N/C</p>
             </div>
             <div className="bg-white p-4 rounded-xl shadow border-t-4 border-red-500">
-              <p className="text-sm text-slate-500">זווית סטייה (α)</p>
-              <p className="text-xl font-bold">{angleDeg}°</p>
+              <p className="text-sm text-slate-500 font-semibold">זווית סטייה (α)</p>
+              <p className="text-xl font-bold text-slate-800">{angleDeg}°</p>
             </div>
             <div className="bg-white p-4 rounded-xl shadow border-t-4 border-emerald-500">
-              <p className="text-sm text-slate-500">tan(α)</p>
-              <p className="text-xl font-bold">{results.tanAlpha.toFixed(3)}</p>
+              <p className="text-sm text-slate-500 font-semibold">tan(α)</p>
+              <p className="text-xl font-bold text-slate-800">{results.tanAlpha.toFixed(3)}</p>
             </div>
           </div>
 
           <AnalysisChart params={params} />
-
-          {/* AI Insight Section */}
-          <div className="bg-gradient-to-br from-indigo-50 to-blue-50 p-6 rounded-xl border border-indigo-100 shadow-sm">
-            <div className="flex justify-between items-center mb-4">
-              <h3 className="text-lg font-bold text-indigo-900">ניתוח פיזיקלי חכם (AI)</h3>
-              <button 
-                onClick={handleGetInsight}
-                disabled={loadingInsight}
-                className="bg-indigo-600 text-white px-4 py-2 rounded-lg hover:bg-indigo-700 transition disabled:opacity-50"
-              >
-                {loadingInsight ? 'מנתח...' : 'קבל תובנה'}
-              </button>
-            </div>
-            {insight ? (
-              <div className="bg-white/50 p-4 rounded-lg border border-indigo-200 animate-in fade-in duration-500">
-                <p className="text-slate-800 leading-relaxed">{insight}</p>
-              </div>
-            ) : (
-              <p className="text-slate-500 italic text-sm">לחץ על הכפתור כדי לקבל הסבר על המצב הנוכחי...</p>
-            )}
-          </div>
         </div>
 
-        {/* Right Column: Controls */}
+        {/* Right Column: Controls and Info */}
         <div className="lg:col-span-4 space-y-8">
           <Controls params={params} setParams={setParams} />
           
@@ -87,13 +56,13 @@ const App: React.FC = () => {
               <p>
                 במצב שיווי משקל, פועלים על הכדור שלושה כוחות: כובד (mg), מתיחות בחוט (T), וכוח חשמלי (Fe).
               </p>
-              <p className="font-mono bg-slate-700 p-2 rounded">
+              <p className="font-mono bg-slate-700 p-2 rounded text-center">
                 tan(α) = Fₑ / F_g
               </p>
               <p>
                 השדה החשמלי של לוח אינסופי הוא אחיד ואינו תלוי במרחק:
               </p>
-              <p className="font-mono bg-slate-700 p-2 rounded">
+              <p className="font-mono bg-slate-700 p-2 rounded text-center">
                 E = σ / (2ε₀)
               </p>
               <p>
