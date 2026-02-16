@@ -2,6 +2,7 @@
 import React, { useState } from 'react';
 import { SimulationParams } from './types';
 import { DEFAULT_PARAMS } from './constants';
+import { createRoot } from 'react-dom/client';
 import { calculateResults, formatScientific } from './services/physics';
 import Visualizer from './components/Visualizer';
 import Controls from './components/Controls';
@@ -81,3 +82,12 @@ const App: React.FC = () => {
 };
 
 export default App;
+const container = document.getElementById('root');
+if (container) {
+  const root = createRoot(container);
+  root.render(
+    <React.StrictMode>
+      <App />
+    </React.StrictMode>
+  );
+}
